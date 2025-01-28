@@ -1,3 +1,3 @@
 def register():
     """Register the Spyre platform."""
-    return "vllm-spyre.platform.SpyrePlatform"
+    return "vllm_spyre.platform.SpyrePlatform"
