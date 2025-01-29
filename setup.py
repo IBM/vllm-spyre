@@ -38,5 +38,5 @@ setup(name="vllm-spyre",
       packages=["vllm_spyre"],
       install_requires=get_requirements(),
       entry_points={
-          "vllm.platform_plugins": ["vllm-spyre = vllm_spyre:register"]
+          "vllm.platform_plugins": ["spyre = vllm_spyre:register"]
       })
