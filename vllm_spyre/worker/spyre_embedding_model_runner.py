@@ -4,7 +4,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 import torch
 from transformers import AutoModel
 
-import vllm.envs as envs
+import vllm_spyre.envs as envs_spyre
 from vllm.config import (DeviceConfig, ModelConfig, ParallelConfig,
                          SchedulerConfig)
 from vllm.logger import init_logger
@@ -52,11 +52,11 @@ class SpyreEmbeddingModelRunner(SpyreModelRunner):
         self.model = AutoModel.from_pretrained(self.model_config.model)
         self.model.eval()
         torch.set_grad_enabled(False)
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
             self.model = torch.compile(self.model,
                                        mode="default",
                                        dynamic=False,
-                                       backend=envs.VLLM_SPYRE_DYNAMO_BACKEND)
+                                       backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
 
     @property
     def vocab_size(self) -> int:

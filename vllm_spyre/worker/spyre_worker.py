@@ -8,7 +8,7 @@ from typing import List, Optional, Tuple
 import torch
 import torch.distributed as dist
 
-import vllm.envs as envs
+import vllm_spyre.envs as envs_spyre
 from vllm.config import VllmConfig
 from vllm.distributed import (ensure_model_parallel_initialized,
                               init_distributed_environment)
@@ -66,7 +66,7 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
         torch._C._distributed_c10d._register_process_group(
             "default", dist.group.WORLD)
 
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND in ["sendnn", "sendnn_decoder"]:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ["sendnn", "sendnn_decoder"]:
             spyre_setup.spyre_dist_setup(
                 rank=self.rank,
                 world_size=self.parallel_config.world_size,
@@ -93,7 +93,7 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
 
             if self.parallel_config.world_size > 1:
                 self.init_distributed_environment()
-            elif envs.VLLM_SPYRE_DYNAMO_BACKEND in [
+            elif envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in [
                     "sendnn", "sendnn_decoder"
             ]:
                 spyre_setup.spyre_setup(rank=0, world_size=1, verbose=True)
@@ -191,7 +191,7 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
             0, len(valid_token_ids_tensor), (batch_size, prompt_len))]
 
         extra_kwargs = {}
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND not in ["sendnn", "sendnn_decoder"]:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND not in ["sendnn", "sendnn_decoder"]:
             # Bug in 2.3.1 fixed in 2.4.1 for SDPA flash cpu
             # impl when padding too much
             extra_kwargs["attn_algorithm"] = "math"
@@ -210,7 +210,7 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
 
         # 2. compile
         print("[SpyreWorker] warmup 2/2...")
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_decoder":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_decoder":
             from torch_sendnn import torch_sendnn
             ul_start_time = time.time()
             torch_sendnn.update_lazyhandle()

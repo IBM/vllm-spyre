@@ -9,7 +9,7 @@ import torch.nn as nn
 from fms.models import get_model
 from transformers import PretrainedConfig
 
-import vllm.envs as envs
+import vllm_spyre.envs as envs_spyre
 from vllm.config import ModelConfig, ParallelConfig
 from vllm.logger import init_logger
 from vllm.model_executor.layers.logits_processor import LogitsProcessor
@@ -44,7 +44,7 @@ class SpyreCausalLM(nn.Module):
                                                 logits_as_input=True)
         self.sampler = Sampler()
         self.past_key_value_states = None
-        self.dtype = torch.float16 if envs.VLLM_SPYRE_DYNAMO_BACKEND == \
+        self.dtype = torch.float16 if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == \
             'sendnn_decoder' else torch.float32
         # number of added padding sequences to fill
         # batch to warmed up batch size
@@ -65,7 +65,7 @@ class SpyreCausalLM(nn.Module):
             self.past_key_value_states = None
 
         extra_kwargs = {}
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn_decoder":
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn_decoder":
             # Bug in 2.3.1 fixed in 2.4.1 for SDPA flash
             # cpu impl when padding too much
             extra_kwargs["attn_algorithm"] = "math"
@@ -124,7 +124,7 @@ class SpyreCausalLM(nn.Module):
             # shouldn't it be part of FMS?
             sys.path.append("/home/senuser/aiu-fms")
 
-            if envs.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_decoder":
+            if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND == "sendnn_decoder":
                 from aiu_as_addon import aiu_adapter, aiu_linear  # noqa: F401
                 linear_type = "gptq_aiu"
                 print("Loaded `aiu_as_addon` functionalities")
@@ -148,7 +148,7 @@ class SpyreCausalLM(nn.Module):
             model_source = "hf"
 
         # we can use fused weights unless running on Spyre
-        fused_weights = envs.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn_decoder"
+        fused_weights = envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND != "sendnn_decoder"
 
         self.model = get_model(architecture="hf_configured",
                                variant=model_config.model,
@@ -189,10 +189,10 @@ class SpyreCausalLM(nn.Module):
                 f"accommodate prompt size of {max_prompt_length} and "
                 f"decode tokens of {max_decode_length}")
 
-        if envs.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
             self.model = torch.compile(self.model,
                                        mode=compile_mode,
-                                       backend=envs.VLLM_SPYRE_DYNAMO_BACKEND)
+                                       backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
 
 
 def get_spyre_model(model_config: ModelConfig, parallel_config: ParallelConfig,
