@@ -19,7 +19,7 @@ logger = init_logger(__name__)
 class SpyrePlatform(Platform):
     _enum = PlatformEnum.OOT
     device_name: str = "spyre"
-    device_type: str = "spyre"
+    device_type: str = "cpu"
     supported_quantization: list[str] = ["gptq"]
 
     @classmethod

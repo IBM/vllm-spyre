@@ -38,8 +38,7 @@ def generate_spyre_vllm_output(model: str, prompts: List[str],
                      tokenizer=model,
                      max_model_len=max_model_len,
                      block_size=block_size,
-                     tensor_parallel_size=tensor_parallel_size,
-                     device="spyre")
+                     tensor_parallel_size=tensor_parallel_size)
 
     vllm_outputs = vllm_model.generate(prompts, sampling_params)
 
@@ -217,8 +216,7 @@ def spyre_vllm_embeddings(model: str, prompts: List[str],
                      tokenizer=model,
                      max_model_len=max_model_len,
                      block_size=block_size,
-                     tensor_parallel_size=tensor_parallel_size,
-                     device="spyre")
+                     tensor_parallel_size=tensor_parallel_size)
 
     vllm_outputs = vllm_model.encode(prompts)
 

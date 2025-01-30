@@ -38,7 +38,6 @@ llm = LLM(
     tokenizer="/models/llama-194m",
     max_model_len=2048,
     block_size=2048,
-    device="spyre",
     tensor_parallel_size=2,
 )
 

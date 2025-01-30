@@ -29,8 +29,7 @@ sampling_params = SamplingParams(max_tokens=max_tokens,
 llm = LLM(model="/models/llama-7b-chat",
           tokenizer="/models/llama-7b-chat",
           max_model_len=2048,
-          block_size=2048,
-          device="spyre")
+          block_size=2048)
 
 # Generate texts from the prompts. The output is a list of RequestOutput objects
 # that contain the prompt, generated text, and other information.
