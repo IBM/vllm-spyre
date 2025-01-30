@@ -20,6 +20,7 @@ class SpyrePlatform(Platform):
     _enum = PlatformEnum.SPYRE
     device_name: str = "spyre"
     device_type: str = "spyre"
+    supported_quantization: list[str] = ["gptq"]
 
     @classmethod
     def get_device_name(cls, device_id: int = 0) -> str:
