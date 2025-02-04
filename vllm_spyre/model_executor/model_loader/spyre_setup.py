@@ -16,13 +16,19 @@ rank = int(os.getenv("RANK", 0))
 world_rank = rank
 world_size = int(os.getenv("WORLD_SIZE", 1))
 
+
 def dprint(text):
     print(f"[{rank:2d}/{world_size:2d}]: {text}")
+
 
 # ==============================================================
 # Common setup
 # ==============================================================
-def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False):
+def spyre_setup(rank=0,
+                world_size=1,
+                local_rank=0,
+                local_size=1,
+                verbose=False):
     # -------------
     # Envar setup for backend
     # -------------
@@ -41,7 +47,8 @@ def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False)
     if world_size > 1:
         os.environ["DEEPRT_EXPORT_DIR"] += f"/{rank}"
         os.environ["DTCOMPILER_EXPORT_DIR"] += f"/{rank}"
-        sys.pycache_prefix=os.getenv("DEEPRT_EXPORT_DIR")+"/py-" + str(rank)
+        sys.pycache_prefix = os.getenv("DEEPRT_EXPORT_DIR") + "/py-" + str(
+            rank)
     os.environ.setdefault("DTCOMPILER_KEEP_EXPORT", "1")
 
     # Inform Flex of the size of this job
@@ -50,24 +57,26 @@ def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False)
     os.environ.setdefault("FLEX_RDMA_LOCAL_SIZE", str(world_size))
     os.environ.setdefault("FLEX_RDMA_LOCAL_RANK", str(rank))
     for peer_rank in range(world_size):
-        pcie_env_str="AIU_WORLD_RANK_"+str(peer_rank)
-        flex_env_str="FLEX_RDMA_PCI_BUS_ADDR_"+str(peer_rank)
+        pcie_env_str = "AIU_WORLD_RANK_" + str(peer_rank)
+        flex_env_str = "FLEX_RDMA_PCI_BUS_ADDR_" + str(peer_rank)
         if os.getenv(pcie_env_str) is None:
-            raise RuntimeError(f"Error: The environment variable {pcie_env_str} is not defined")
+            raise RuntimeError(
+                f"Error: The environment variable {pcie_env_str} is not defined"
+            )
         if os.getenv(flex_env_str) is None:
-            raise RuntimeError(f"Error: The environment variable {flex_env_str} is not defined")
+            raise RuntimeError(
+                f"Error: The environment variable {flex_env_str} is not defined"
+            )
     if os.getenv("DUMP_MEMMAP") is not None:
         if os.getenv("SDSC_REF_DIR") is None:
             os.environ["SDSC_REF_DIR"] = os.environ["DEEPRT_EXPORT_DIR"]
         else:
             os.environ["SDSC_REF_DIR"] += f"/{rank}"
-        assert (
-            os.getenv("DUMP_MEMMAP_DIR") is not None
-        ), "DUMP_MEMMAP_DIR not set while DUMP_MEMMAP set"
+        assert (os.getenv("DUMP_MEMMAP_DIR")
+                is not None), "DUMP_MEMMAP_DIR not set while DUMP_MEMMAP set"
         os.environ["DUMP_MEMMAP_DIR"] += f"/{rank}"
-        os.makedirs(
-            os.environ["DUMP_MEMMAP_DIR"], exist_ok=True
-        )  # directory needs to exist
+        os.makedirs(os.environ["DUMP_MEMMAP_DIR"],
+                    exist_ok=True)  # directory needs to exist
 
     for peer_rank in range(world_size):
         pcie_env_str = "AIU_WORLD_RANK_" + str(peer_rank)
@@ -82,8 +91,7 @@ def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False)
             if os.getenv(flex_env_str) is None:
                 if os.getenv("PCIDEVICE_IBM_COM_SENTIENT_PF") is not None:
                     os.environ[pcie_env_str] = os.getenv(
-                        "PCIDEVICE_IBM_COM_SENTIENT_PF"
-                    )
+                        "PCIDEVICE_IBM_COM_SENTIENT_PF")
 
                 if os.getenv(pcie_env_str) is not None:
                     os.environ[flex_env_str] = os.getenv(pcie_env_str)
@@ -92,24 +100,30 @@ def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False)
                         f"[{rank}/{world_size}]: ERROR: {flex_env_str} and {pcie_env_str} were not set for peer {peer_rank}."
                     )
         if rank == 0 and verbose:
-            dprint(f"PCI Addr Rank {peer_rank} {pcie_env_str}={os.environ[pcie_env_str]}")
-            dprint(f"PCI Addr Rank {peer_rank} {flex_env_str}={os.environ[flex_env_str]}")
+            dprint(
+                f"PCI Addr Rank {peer_rank} {pcie_env_str}={os.environ[pcie_env_str]}"
+            )
+            dprint(
+                f"PCI Addr Rank {peer_rank} {flex_env_str}={os.environ[flex_env_str]}"
+            )
 
     if rank == 0 and verbose:
-        dprint(f"FLEX_COMPUTE=" + os.getenv("FLEX_COMPUTE"))
-        dprint(f"FLEX_DEVICE=" + os.getenv("FLEX_DEVICE"))
-        dprint(f"DEEPRT_EXPORT_DIR=" + os.getenv("DEEPRT_EXPORT_DIR"))
-        dprint(f"DTCOMPILER_EXPORT_DIR=" + os.getenv("DTCOMPILER_EXPORT_DIR"))
+        dprint("FLEX_COMPUTE=" + os.getenv("FLEX_COMPUTE"))
+        dprint("FLEX_DEVICE=" + os.getenv("FLEX_DEVICE"))
+        dprint("DEEPRT_EXPORT_DIR=" + os.getenv("DEEPRT_EXPORT_DIR"))
+        dprint("DTCOMPILER_EXPORT_DIR=" + os.getenv("DTCOMPILER_EXPORT_DIR"))
         if os.getenv(spyre_config_file_envar) is not None:
-            dprint(f"{spyre_config_file_envar}=" + os.environ[spyre_config_file_envar])
+            dprint(f"{spyre_config_file_envar}=" +
+                   os.environ[spyre_config_file_envar])
         if os.getenv("SENLIB_DEVEL_CONFIG_FILE") is not None:
-            dprint(f"SENLIB_DEVEL_CONFIG_FILE=" + os.environ["SENLIB_DEVEL_CONFIG_FILE"])
+            dprint("SENLIB_DEVEL_CONFIG_FILE=" +
+                   os.environ["SENLIB_DEVEL_CONFIG_FILE"])
         if os.getenv(flex_env_str) is not None:
             dprint(f"{flex_env_str}=" + os.environ[flex_env_str])
-        dprint(f"FLEX_RDMA_LOCAL_RANK=" + os.getenv("FLEX_RDMA_LOCAL_RANK"))
-        dprint(f"FLEX_RDMA_LOCAL_SIZE=" + os.getenv("FLEX_RDMA_LOCAL_SIZE"))
-        dprint(f"FLEX_RDMA_WORLD_RANK=" + os.getenv("FLEX_RDMA_WORLD_RANK"))
-        dprint(f"FLEX_RDMA_WORLD_SIZE=" + os.getenv("FLEX_RDMA_WORLD_SIZE"))
+        dprint("FLEX_RDMA_LOCAL_RANK=" + os.getenv("FLEX_RDMA_LOCAL_RANK"))
+        dprint("FLEX_RDMA_LOCAL_SIZE=" + os.getenv("FLEX_RDMA_LOCAL_SIZE"))
+        dprint("FLEX_RDMA_WORLD_RANK=" + os.getenv("FLEX_RDMA_WORLD_RANK"))
+        dprint("FLEX_RDMA_WORLD_SIZE=" + os.getenv("FLEX_RDMA_WORLD_SIZE"))
 
     if os.getenv("FLEX_COMPUTE") == "SENTIENT":
         pcie_env_str = "AIU_WORLD_RANK_" + str(rank)
@@ -121,13 +135,17 @@ def spyre_setup(rank=0, world_size=1, local_rank=0, local_size=1, verbose=False)
                 device_id = data["GENERAL"]["sen_bus_id"]
         dprint(f"Spyre: Enabled ({device_id})")
     else:
-        dprint(f"Spyre: Disabled (Senulator)")
+        dprint("Spyre: Disabled (Senulator)")
 
 
 # ==============================================================
 # Distributed setup
 # ==============================================================
-def spyre_dist_setup(rank, world_size, local_rank=-0, local_size=-1, verbose=False):
+def spyre_dist_setup(rank,
+                     world_size,
+                     local_rank=-0,
+                     local_size=-1,
+                     verbose=False):
     if local_rank < 0:
         local_rank = rank
     if local_size < 0:
@@ -137,7 +155,7 @@ def spyre_dist_setup(rank, world_size, local_rank=-0, local_size=-1, verbose=Fal
         os.environ["MASTER_ADDR"] = "localhost"
         os.environ["MASTER_PORT"] = "12355"
     elif rank == 0 or verbose:
-        dprint(f"Detected running via torchrun")
+        dprint("Detected running via torchrun")
 
     if rank == 0 or verbose:
         dprint(f"Parallel Backend: {torch.distributed.get_backend()}")

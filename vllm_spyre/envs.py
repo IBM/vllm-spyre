@@ -7,10 +7,8 @@ if TYPE_CHECKING:
     VLLM_SPYRE_WARMUP_NEW_TOKENS: Optional[List[int]] = None
     VLLM_SPYRE_WARMUP_BATCH_SIZES: Optional[List[int]] = None
 
-
 environment_variables: Dict[str, Callable[[], Any]] = {
 
-    
     # Defines the prompt lengths the Spyre accelerator should be prepared
     # for, formatted as comma separated list.
     "VLLM_SPYRE_WARMUP_PROMPT_LENS":
@@ -19,7 +17,6 @@ environment_variables: Dict[str, Callable[[], Any]] = {
                                   default='64').split(',')
     ],
 
-   
     # Defines the max output tokens the Spyre accelerator should be prepared
     # for, formatted as comma separated list.
     "VLLM_SPYRE_WARMUP_NEW_TOKENS":
@@ -28,7 +25,6 @@ environment_variables: Dict[str, Callable[[], Any]] = {
                                   default='20').split(',')
     ],
 
-   
     # Defines the batch sizes the Spyre accelerator should be prepared
     # for, formatted as comma separated list.
     "VLLM_SPYRE_WARMUP_BATCH_SIZES":

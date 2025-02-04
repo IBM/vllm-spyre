@@ -8,13 +8,13 @@ import torch.distributed as dist
 import torch.nn as nn
 from fms.models import get_model
 from transformers import PretrainedConfig
-
-import vllm_spyre.envs as envs_spyre
 from vllm.config import ModelConfig, ParallelConfig
 from vllm.logger import init_logger
 from vllm.model_executor.layers.logits_processor import LogitsProcessor
 from vllm.model_executor.layers.sampler import Sampler, SamplerOutput
 from vllm.model_executor.sampling_metadata import SamplingMetadata
+
+import vllm_spyre.envs as envs_spyre
 
 try:
     from torch_sendnn import torch_sendnn  # noqa: F401
@@ -190,9 +190,10 @@ class SpyreCausalLM(nn.Module):
                 f"decode tokens of {max_decode_length}")
 
         if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
-            self.model = torch.compile(self.model,
-                                       mode=compile_mode,
-                                       backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
+            self.model = torch.compile(
+                self.model,
+                mode=compile_mode,
+                backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
 
 
 def get_spyre_model(model_config: ModelConfig, parallel_config: ParallelConfig,

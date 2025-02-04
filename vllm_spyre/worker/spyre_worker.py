@@ -7,20 +7,21 @@ from typing import List, Optional, Tuple
 
 import torch
 import torch.distributed as dist
-
-import vllm_spyre.envs as envs_spyre
 from vllm.config import VllmConfig
 from vllm.distributed import (ensure_model_parallel_initialized,
                               init_distributed_environment)
 from vllm.model_executor import set_random_seed
-from vllm_spyre.model_executor.model_loader import spyre_setup
 from vllm.sequence import ExecuteModelRequest
-from vllm_spyre.worker.spyre_embedding_model_runner import SpyreEmbeddingModelRunner
-# from vllm.worker.spyre_model_runner import SpyreModelRunner
-from vllm_spyre.worker.spyre_model_runner import SpyreModelRunner
 from vllm.worker.worker_base import (LocalOrDistributedWorkerBase,
                                      LoraNotSupportedWorkerBase, WorkerBase,
                                      WorkerInput)
+
+import vllm_spyre.envs as envs_spyre
+from vllm_spyre.model_executor.model_loader import spyre_setup
+from vllm_spyre.worker.spyre_embedding_model_runner import \
+    SpyreEmbeddingModelRunner
+# from vllm.worker.spyre_model_runner import SpyreModelRunner
+from vllm_spyre.worker.spyre_model_runner import SpyreModelRunner
 
 
 class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
@@ -66,7 +67,9 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
         torch._C._distributed_c10d._register_process_group(
             "default", dist.group.WORLD)
 
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in ["sendnn", "sendnn_decoder"]:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in [
+                "sendnn", "sendnn_decoder"
+        ]:
             spyre_setup.spyre_dist_setup(
                 rank=self.rank,
                 world_size=self.parallel_config.world_size,
@@ -191,7 +194,9 @@ class SpyreWorker(LoraNotSupportedWorkerBase, LocalOrDistributedWorkerBase):
             0, len(valid_token_ids_tensor), (batch_size, prompt_len))]
 
         extra_kwargs = {}
-        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND not in ["sendnn", "sendnn_decoder"]:
+        if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND not in [
+                "sendnn", "sendnn_decoder"
+        ]:
             # Bug in 2.3.1 fixed in 2.4.1 for SDPA flash cpu
             # impl when padding too much
             extra_kwargs["attn_algorithm"] = "math"

@@ -1,10 +1,11 @@
 import hashlib
 import operator
 from dataclasses import dataclass, field
-from typing import (Any, List, Optional)
+from typing import Any, List, Optional
+
+from vllm.logger import init_logger
 
 import vllm_spyre.envs as envs_spyre
-from vllm.logger import init_logger
 
 logger = init_logger(__name__)
 
@@ -203,4 +204,3 @@ class SchedulerConfig:
     @property
     def is_multi_step(self) -> bool:
         return self.num_scheduler_steps > 1
-
