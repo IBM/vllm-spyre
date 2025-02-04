@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Dict
 
 if TYPE_CHECKING:
     VLLM_SPYRE_DYNAMO_BACKEND: str = "sendnn_decoder"
@@ -7,7 +7,6 @@ if TYPE_CHECKING:
     # VLLM_SPYRE_WARMUP_PROMPT_LENS: Optional[List[int]] = None
     # VLLM_SPYRE_WARMUP_NEW_TOKENS: Optional[List[int]] = None
     # VLLM_SPYRE_WARMUP_BATCH_SIZES: Optional[List[int]] = None
-
 
 environment_variables: Dict[str, Callable[[], Any]] = {
 

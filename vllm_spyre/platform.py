@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 
 import torch
-
 from vllm.logger import init_logger
 
 if TYPE_CHECKING:
@@ -9,7 +8,6 @@ if TYPE_CHECKING:
 else:
     VllmConfig = None
 import vllm.envs as envs
-
 # from .interface import Platform, PlatformEnum
 from vllm.platforms import Platform, PlatformEnum
 

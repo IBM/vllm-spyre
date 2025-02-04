@@ -3,8 +3,6 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 import torch
 from transformers import AutoModel
-
-import vllm_spyre.envs as envs_spyre
 from vllm.config import (DeviceConfig, ModelConfig, ParallelConfig,
                          SchedulerConfig)
 from vllm.logger import init_logger
@@ -13,6 +11,8 @@ from vllm.model_executor.pooling_metadata import PoolingMetadata
 from vllm.pooling_params import PoolingParams
 from vllm.sequence import (IntermediateTensors, PoolerOutput, SequenceData,
                            SequenceGroupMetadata)
+
+import vllm_spyre.envs as envs_spyre
 
 from .spyre_model_runner import ModelInputForSpyre, SpyreModelRunner
 
@@ -53,10 +53,11 @@ class SpyreEmbeddingModelRunner(SpyreModelRunner):
         self.model.eval()
         torch.set_grad_enabled(False)
         if envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND in BACKEND_LIST:
-            self.model = torch.compile(self.model,
-                                       mode="default",
-                                       dynamic=False,
-                                       backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
+            self.model = torch.compile(
+                self.model,
+                mode="default",
+                dynamic=False,
+                backend=envs_spyre.VLLM_SPYRE_DYNAMO_BACKEND)
 
     @property
     def vocab_size(self) -> int:
