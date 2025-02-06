@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Any, Callable, Dict
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
 
 if TYPE_CHECKING:
     VLLM_SPYRE_DYNAMO_BACKEND: str = "sendnn_decoder"
