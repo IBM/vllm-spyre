@@ -1,6 +1,6 @@
 """Verification of vLLM output by comparing with HF
 
-Run `pytest tests/spyre/test_spyre_basic.py`.
+Run `python -m pytest tests/spyre/test_spyre_embeddings.py`.
 """
 
 from typing import List, Tuple
@@ -21,7 +21,7 @@ from spyre_util import (compare_embedding_results, spyre_vllm_embeddings,
                          [(64, 4), (64, 8), (128, 4),
                           (128, 8)])  # (prompt_length/new_tokens/batch_size)
 @pytest.mark.parametrize("backend",
-                         ["inductor"])  #, "eager", "sendnn_decoder"])
+                         ["eager"])  #, "inductor", "sendnn_decoder"])
 def test_output(
     model: str,
     prompts: List[str],

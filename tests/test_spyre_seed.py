@@ -1,6 +1,6 @@
 """Verification of seeded random sampling to be deterministic
 
-Run `pytest tests/spyre/test_spyre_seed.py`.
+Run `python -m pytest tests/spyre/test_spyre_seed.py`.
 """
 
 import math
@@ -8,6 +8,7 @@ from typing import Tuple
 
 import pytest
 from spyre_util import generate_spyre_vllm_output
+
 from vllm import SamplingParams
 
 
@@ -22,7 +23,7 @@ from vllm import SamplingParams
                                           (128, 20, 4), (128, 20, 8)]
                          )  # (prompt_length/new_tokens/batch_size)
 @pytest.mark.parametrize("backend",
-                         ["inductor"])  #, "eager", "sendnn_decoder"])
+                         ["eager"])  #, "inductor", "sendnn_decoder"])
 def test_seed(
     model: str,
     prompt: str,

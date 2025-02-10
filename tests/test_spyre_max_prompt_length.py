@@ -1,6 +1,6 @@
 """Verification of handling prompt length exceeding warmup shapes
 
-Run `pytest tests/spyre/test_spyre_max_prompt_length.py`.
+Run `python -m pytest tests/spyre/test_spyre_max_prompt_length.py`.
 """
 
 from typing import List, Tuple
@@ -9,6 +9,7 @@ import pytest
 from spyre_util import (compare_results, generate_hf_output,
                         generate_spyre_vllm_output)
 from transformers import AutoTokenizer
+
 from vllm import SamplingParams
 
 
@@ -28,7 +29,7 @@ from vllm import SamplingParams
                          [[(64, 20, 4)], [(64, 20, 4), (128, 20, 4)]]
                          )  # (prompt_length/new_tokens/batch_size)
 @pytest.mark.parametrize("backend",
-                         ["inductor"])  #, "eager", "sendnn_decoder"])
+                         ["eager"])  #, "inductor", "sendnn_decoder"])
 def test_output(
     model: str,
     prompts: List[str],
