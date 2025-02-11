@@ -29,7 +29,7 @@ def get_requirements() -> List[str]:
     try:
         requirements = _read_requirements("requirements.txt")
     except ValueError:
-        print("Failed to read requirements.txt in vllm_ascend.")
+        print("Failed to read requirements.txt in vllm_spyre.")
     return requirements
 
 
