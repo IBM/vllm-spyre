@@ -8,7 +8,6 @@ from typing import Tuple
 
 import pytest
 from spyre_util import generate_spyre_vllm_output
-
 from vllm import SamplingParams
 
 
