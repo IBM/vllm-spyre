@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 else:
     VllmConfig = None
 import vllm.envs as envs
-# from .interface import Platform, PlatformEnum
 from vllm.platforms import Platform, PlatformEnum
 
 logger = init_logger(__name__)
