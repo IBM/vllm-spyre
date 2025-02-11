@@ -39,20 +39,14 @@ class SpyrePlatform(Platform):
         parallel_config = vllm_config.parallel_config
         scheduler_config = vllm_config.scheduler_config
 
-        if scheduler_config.is_multi_step:
+        if scheduler_config.is_multi_step or envs.VLLM_USE_V1:
             raise NotImplementedError
 
         if parallel_config.worker_cls == "auto":
-            if envs.VLLM_USE_V1:
-                raise NotImplementedError
-            else:
-                parallel_config.worker_cls = \
-                    "vllm_spyre.worker.spyre_worker.SpyreWorker"
-        if envs.VLLM_USE_V1:
-            raise NotImplementedError
-        else:
-            parallel_config.scheduler_cls = \
-                "vllm_spyre.core.scheduler.SpyreScheduler"
+            parallel_config.worker_cls = \
+                "vllm_spyre.worker.spyre_worker.SpyreWorker"
+        parallel_config.scheduler_cls = \
+            "vllm_spyre.core.scheduler.SpyreScheduler"
         cache_config = vllm_config.cache_config
         if cache_config:
             # spyre needs block_size = max_model_len
