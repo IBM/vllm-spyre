@@ -23,5 +23,6 @@ jobs:
           export MASTER_PORT=12355 && \
           export MASTER_ADDR=localhost && \
           export DISTRIBUTED_STRATEGY_IGNORE_MODULES=WordEmbedding && \
-          python3.12 -m pytest tests/spyre -v
+          cd vllm-spyre && \
+          python3.12 -m pytest tests -v
         '''
