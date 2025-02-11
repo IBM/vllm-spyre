@@ -10,7 +10,7 @@
 #    # Commit changed files with message 'Run yapf and ruff'
 #
 #
-# YAPF + Clang formatter (if installed). This script formats all changed files from the last mergebase.
+# This script formats all changed files from the last mergebase.
 # You are encouraged to run this locally before pushing changes for review.
 
 # Cause the script to exit if a single command fails
@@ -33,14 +33,12 @@ check_command ruff
 check_command mypy
 check_command codespell
 check_command isort
-check_command clang-format
 
 YAPF_VERSION=$(yapf --version | awk '{print $2}')
 RUFF_VERSION=$(ruff --version | awk '{print $2}')
 MYPY_VERSION=$(mypy --version | awk '{print $2}')
 CODESPELL_VERSION=$(codespell --version)
 ISORT_VERSION=$(isort --vn)
-CLANGFORMAT_VERSION=$(clang-format --version | awk '{print $3}')
 PYMARKDOWNLNT_VERSION=$(pymarkdownlnt version | awk '{print $1}')
 
 # params: tool name, tool version, required version
@@ -57,7 +55,6 @@ tool_version_check "ruff" "$RUFF_VERSION"
 tool_version_check "mypy" "$MYPY_VERSION"
 tool_version_check "isort" "$ISORT_VERSION"
 tool_version_check "codespell" "$CODESPELL_VERSION"
-tool_version_check "clang-format" "$CLANGFORMAT_VERSION"
 tool_version_check "pymarkdownlnt" "$PYMARKDOWNLNT_VERSION"
 
 YAPF_FLAGS=(
@@ -182,7 +179,7 @@ lint_changed() {
 
     if ! git diff --diff-filter=ACM --quiet --exit-code "$MERGEBASE" -- '*.py' '*.pyi' &>/dev/null; then
         git diff --name-only --diff-filter=ACM "$MERGEBASE" -- '*.py' '*.pyi' | xargs \
-             ruff check
+             ruff check --force-exclude
     fi
 
 }
@@ -195,7 +192,7 @@ if [[ "$1" == '--files' ]]; then
    # If `--all` is passed, then any further arguments are ignored and the
    # entire python directory is linted.
 elif [[ "$1" == '--all' ]]; then
-   lint vllm tests examples
+   lint vllm_spyre tests examples
 else
    # Format only the files that changed in last commit.
    lint_changed
@@ -241,57 +238,6 @@ else
    isort_check_changed
 fi
 echo 'vLLM isort: Done'
-
-# Clang-format section
-# Exclude some files for formatting because they are vendored
-# NOTE: Keep up to date with .github/workflows/clang-format.yml
-CLANG_FORMAT_EXCLUDES=(
-    'csrc/moe/topk_softmax_kernels.cu'
-    'csrc/quantization/gguf/ggml-common.h'
-    'csrc/quantization/gguf/dequantize.cuh'
-    'csrc/quantization/gguf/vecdotq.cuh'
-    'csrc/quantization/gguf/mmq.cuh'
-    'csrc/quantization/gguf/mmvq.cuh'
-)
-
-# Format specified files with clang-format
-clang_format() {
-    clang-format -i "$@"
-}
-
-# Format files that differ from main branch with clang-format.
-clang_format_changed() {
-    # The `if` guard ensures that the list of filenames is not empty, which
-    # could cause clang-format to receive 0 positional arguments, making it hang
-    # waiting for STDIN.
-    #
-    # `diff-filter=ACM` and $MERGEBASE is to ensure we only format files that
-    # exist on both branches.
-    MERGEBASE="$(git merge-base origin/main HEAD)"
-
-    # Get the list of changed files, excluding the specified ones
-    changed_files=$(git diff --name-only --diff-filter=ACM "$MERGEBASE" -- '*.h' '*.cpp' '*.cu' '*.cuh' | (grep -vFf <(printf "%s\n" "${CLANG_FORMAT_EXCLUDES[@]}") || echo -e))
-    if [ -n "$changed_files" ]; then
-        echo "$changed_files" | xargs -P 5 clang-format -i
-    fi
-}
-
-# Format all files with clang-format
-clang_format_all() {
-    find csrc \( -name '*.h' -o -name '*.cpp' -o -name '*.cu' -o -name '*.cuh' \) -print \
-        | grep -vFf <(printf "%s\n" "${CLANG_FORMAT_EXCLUDES[@]}") \
-        | xargs clang-format -i
-}
-
-# Run clang-format
-if [[ "$1" == '--files' ]]; then
-   clang_format "${@:2}"
-elif [[ "$1" == '--all' ]]; then
-   clang_format_all
-else
-   clang_format_changed
-fi
-echo 'vLLM clang-format: Done'
 
 echo 'vLLM actionlint:'
 tools/actionlint.sh -color

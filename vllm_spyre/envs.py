@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
 
 if TYPE_CHECKING:
     VLLM_SPYRE_DYNAMO_BACKEND: str = "sendnn_decoder"
+<<<<<<< ysc-pluggable-scheduler
     VLLM_SPYRE_WARMUP_PROMPT_LENS: Optional[List[int]] = None
     VLLM_SPYRE_WARMUP_NEW_TOKENS: Optional[List[int]] = None
     VLLM_SPYRE_WARMUP_BATCH_SIZES: Optional[List[int]] = None
@@ -29,6 +30,10 @@ environment_variables: Dict[str, Callable[[], Any]] = {
         int(b) for b in os.getenv(key='VLLM_SPYRE_WARMUP_BATCH_SIZES',
                                   default='1').split(',')
     ],
+=======
+
+environment_variables: Dict[str, Callable[[], Any]] = {
+>>>>>>> sop-dev
 
     # Defines the backend that torch.compile will use when using Spyre
     # Available options:

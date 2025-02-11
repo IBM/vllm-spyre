@@ -13,7 +13,7 @@ run_mypy() {
         mypy --python-version "${PYTHON_VERSION}" "$@"
         return
     fi
-    # mypy --follow-imports skip --python-version "${PYTHON_VERSION}" "$@" TODO find fix
+    mypy --follow-imports skip --python-version "${PYTHON_VERSION}" "$@"
 }
 
 run_mypy vllm_spyre

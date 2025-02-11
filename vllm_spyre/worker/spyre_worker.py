@@ -18,8 +18,8 @@ from vllm.worker.worker_base import (LocalOrDistributedWorkerBase,
 
 import vllm_spyre.envs as envs_spyre
 from vllm_spyre.model_executor.model_loader import spyre_setup
-from vllm_spyre.worker.spyre_embedding_model_runner import \
-    SpyreEmbeddingModelRunner
+from vllm_spyre.worker.spyre_embedding_model_runner import (
+    SpyreEmbeddingModelRunner)
 # from vllm.worker.spyre_model_runner import SpyreModelRunner
 from vllm_spyre.worker.spyre_model_runner import SpyreModelRunner
 
