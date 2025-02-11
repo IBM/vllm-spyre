@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Tuple, Union
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
 from vllm import LLM, SamplingParams
 
 DISABLE_ASSERTS = False  # used for debugging

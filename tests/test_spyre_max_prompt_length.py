@@ -9,7 +9,6 @@ import pytest
 from spyre_util import (compare_results, generate_hf_output,
                         generate_spyre_vllm_output)
 from transformers import AutoTokenizer
-
 from vllm import SamplingParams
 
 
