@@ -22,6 +22,7 @@ class SpyrePlatform(Platform):
     device_name: str = "spyre"
     device_type: str = "cpu"
     supported_quantization: list[str] = ["gptq"]
+    spyre_warmup_shapes: tuple[dict[str, int]]
 
     @classmethod
     def get_device_name(cls, device_id: int = 0) -> str:
@@ -52,7 +53,25 @@ class SpyrePlatform(Platform):
             # spyre needs block_size = max_model_len
             vllm_config.cache_config.block_size = \
                 vllm_config.model_config.max_model_len
+        cls.set_warmup_shapes(scheduler_config)
 
+    @classmethod
+    def is_pin_memory_available(cls) -> bool:
+        logger.warning("Pin memory is not supported on Spyre.")
+        return False
+
+    @classmethod
+    def inference_mode(cls):
+        """A device-specific wrapper of `torch.inference_mode`.
+
+        This wrapper is recommended because some hardware backends such as TPU
+        do not support `torch.inference_mode`. In such a case, they will fall
+        back to `torch.no_grad` by overriding this method.
+        """
+        return torch.no_grad()
+
+    @classmethod
+    def set_warmup_shapes(cls, scheduler_config) -> None:
         # load warmup shapes and sort by "speed"
         wup_prompt_lens = envs_spyre.VLLM_SPYRE_WARMUP_PROMPT_LENS or []
         wup_batch_sizes = envs_spyre.VLLM_SPYRE_WARMUP_BATCH_SIZES or []
@@ -76,7 +95,7 @@ class SpyrePlatform(Platform):
         print("[SchedulerConfig] VLLM_SPYRE_WARMUP_BATCH_SIZES =",
               wup_batch_sizes)
 
-        scheduler_config.spyre_warmup_shapes = tuple(
+        cls.spyre_warmup_shapes = tuple(
             sorted([{
                 'prompt_length': pl,
                 'new_tokens': nt,
@@ -86,16 +105,5 @@ class SpyrePlatform(Platform):
                    key=operator.itemgetter('batch_size', 'prompt_length')))
 
     @classmethod
-    def is_pin_memory_available(cls) -> bool:
-        logger.warning("Pin memory is not supported on Spyre.")
-        return False
-
-    @classmethod
-    def inference_mode(cls):
-        """A device-specific wrapper of `torch.inference_mode`.
-
-        This wrapper is recommended because some hardware backends such as TPU
-        do not support `torch.inference_mode`. In such a case, they will fall
-        back to `torch.no_grad` by overriding this method.
-        """
-        return torch.no_grad()
+    def get_warmup_shapes(cls) -> tuple[dict[str, int]]:
+        return cls.spyre_warmup_shapes

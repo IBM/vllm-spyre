@@ -12,6 +12,7 @@ from vllm.config import CacheConfig, LoRAConfig, SchedulerConfig
 from vllm.core.interfaces import AllocStatus, BlockSpaceManager
 from vllm.logger import init_logger
 from vllm.lora.request import LoRARequest
+from vllm.platforms import current_platform
 from vllm.prompt_adapter.request import PromptAdapterRequest
 from vllm.sequence import (Sequence, SequenceData, SequenceGroup,
                            SequenceGroupMetadata, SequenceGroupMetadataDelta,
@@ -919,8 +920,8 @@ class SpyreScheduler:
         ignored_seq_groups: List[SequenceGroup] = []
         seq_groups: List[ScheduledSequenceGroup] = []
 
-        applicable_spyre_warmup_shapes = list(
-            self.scheduler_config.spyre_warmup_shapes)
+        spyre_warmup_shapes = current_platform.get_warmup_shapes()
+        applicable_spyre_warmup_shapes = list(spyre_warmup_shapes)
 
         waiting_queue = self.waiting
 
