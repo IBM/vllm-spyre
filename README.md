@@ -34,5 +34,5 @@ pip install --no-build-isolation -v -e .
 cd ..
 git clone https://github.com/IBM/vllm-spyre.git
 cd vllm-spyre
-pip install --no-build-isolation -v -e .
+pip install -v -e .
 ```
