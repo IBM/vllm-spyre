@@ -21,7 +21,7 @@ class SpyrePlatform(Platform):
     device_name: str = "spyre"
     device_type: str = "cpu"
     supported_quantization: list[str] = ["gptq"]
-    spyre_warmup_shapes: tuple[dict[str, int]]
+    spyre_warmup_shapes: tuple[dict[str, int], ...]
 
     @classmethod
     def get_device_name(cls, device_id: int = 0) -> str:
@@ -102,5 +102,5 @@ class SpyrePlatform(Platform):
                    key=operator.itemgetter('batch_size', 'prompt_length')))
 
     @classmethod
-    def get_warmup_shapes(cls) -> tuple[dict[str, int]]:
+    def get_warmup_shapes(cls) -> tuple[dict[str, int], ...]:
         return cls.spyre_warmup_shapes
