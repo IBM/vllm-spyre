@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 else:
     VllmConfig = None
 import vllm.envs as envs
-# from .interface import Platform, PlatformEnum
 from vllm.platforms import Platform, PlatformEnum
 
 import vllm_spyre.envs as envs_spyre
@@ -62,11 +61,9 @@ class SpyrePlatform(Platform):
 
     @classmethod
     def inference_mode(cls):
-        """A device-specific wrapper of `torch.inference_mode`.
-
-        This wrapper is recommended because some hardware backends such as TPU
-        do not support `torch.inference_mode`. In such a case, they will fall
-        back to `torch.no_grad` by overriding this method.
+        """
+        Spyre does not support `torch.inference_mode`. 
+        This allows to fall back to `torch.no_grad` when inference mode is set.
         """
         return torch.no_grad()
 
