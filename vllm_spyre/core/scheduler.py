@@ -6,16 +6,12 @@ from typing import (Callable, Deque, Dict, Iterable, List, Optional, Set,
 
 from vllm.config import CacheConfig, LoRAConfig, SchedulerConfig
 from vllm.core.interfaces import AllocStatus, BlockSpaceManager
-from vllm.core.scheduler import (ARTIFICIAL_PREEMPTION_MAX_CNT,
-                                 ARTIFICIAL_PREEMPTION_PROB,
-                                 ENABLE_ARTIFICIAL_PREEMPT, PreemptionMode,
-                                 ScheduledSequenceGroup, SchedulerOutputs,
-                                 SchedulerPrefillOutputs,
-                                 SchedulerRunningOutputs,
-                                 SchedulerSwappedInOutputs, SchedulingBudget,
-                                 scheduled_seq_group_builder,
-                                 scheduler_running_outputs_builder,
-                                 seq_group_metadata_builder)
+from vllm.core.scheduler import (
+    ARTIFICIAL_PREEMPTION_MAX_CNT, ARTIFICIAL_PREEMPTION_PROB,
+    ENABLE_ARTIFICIAL_PREEMPT, PreemptionMode, ScheduledSequenceGroup,
+    SchedulerOutputs, SchedulerPrefillOutputs, SchedulerRunningOutputs,
+    SchedulerSwappedInOutputs, SchedulingBudget, scheduled_seq_group_builder,
+    scheduler_running_outputs_builder, seq_group_metadata_builder)
 from vllm.logger import init_logger
 from vllm.platforms import current_platform
 from vllm.sequence import (Sequence, SequenceData, SequenceGroup,
