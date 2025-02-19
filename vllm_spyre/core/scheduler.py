@@ -6,6 +6,7 @@ from typing import (Callable, Deque, Dict, Iterable, List, Optional, Set,
 
 from vllm.config import CacheConfig, LoRAConfig, SchedulerConfig
 from vllm.core.interfaces import AllocStatus, BlockSpaceManager
+# yapf: disable
 from vllm.core.scheduler import (ARTIFICIAL_PREEMPTION_MAX_CNT,
                                  ARTIFICIAL_PREEMPTION_PROB,
                                  ENABLE_ARTIFICIAL_PREEMPT, PreemptionMode,
