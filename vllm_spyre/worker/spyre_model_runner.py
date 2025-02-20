@@ -104,7 +104,7 @@ class SpyreModelRunner(ModelRunnerBase[ModelInputForSpyre]):
 
     def get_model(self) -> nn.Module:
         return self.model
-    
+
     def load_model(self, prompt_lens: Iterable[int],
                    num_decode_tokens: Iterable[int]) -> None:
         max_pad_length = max(prompt_lens)
